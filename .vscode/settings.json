@@ -1,0 +1,7 @@
+{
+    "makefile.configureOnOpen": true,
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "philo.h": "c"
+    }
+}

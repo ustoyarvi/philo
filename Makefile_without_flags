@@ -1,0 +1,21 @@
+NAME = philo
+CC = gcc
+SRC = src/cleanup.c src/init.c src/main.c src/monitor_routine.c src/philo_routine.c src/simulation.c src/utils.c 
+OBJ = $(SRC:src/%.c=obj/%.o)
+
+all: $(NAME)
+
+$(NAME): $(OBJ)
+	$(CC) -o $(NAME) $(OBJ) -lpthread
+
+obj/%.o : src/%.c
+	mkdir -p obj
+	$(CC) -c $< -o $@
+
+clean:
+	rm -rf obj/
+
+fclean: clean
+	rm -f $(NAME)
+
+re: fclean all
