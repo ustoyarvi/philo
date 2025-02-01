@@ -56,6 +56,7 @@ void    *philosopher_routine(void *arg)
 {
     t_philo *philo;
     bool    ready;
+    int     i;
 
     philo = (t_philo *)arg;
     ready = false;
@@ -65,8 +66,22 @@ void    *philosopher_routine(void *arg)
         ready = philo->data->all_threads_ready;
         pthread_mutex_unlock(&philo->data->game_over_lock);
     }
+    i = 0;
+    pthread_mutex_lock(&philo->data->print_lock);
+    philo->data->start_time = get_time_in_ms();
+    pthread_mutex_unlock(&philo->data->print_lock);
+    while (i < philo->data->num_philos)
+    {
+        pthread_mutex_lock(&philo->data->meal_lock);
+        pthread_mutex_lock(&philo->data->print_lock);
+        philo->data->philos[i].last_meal = philo->data->start_time;
+        pthread_mutex_unlock(&philo->data->print_lock);
+        pthread_mutex_unlock(&philo->data->meal_lock);
+        i++;
+    }
+
     if (philo->id % 2 == 0) // || philo->id == philo->data->num_philos)
-        precise_sleep(5000, philo->data);
+        precise_sleep(1000, philo->data);
         //usleep(1000);
     while (!is_game_over(philo))
     {
@@ -83,14 +98,34 @@ void    *philosopher_routine(void *arg)
     return (NULL);
 }
 
+
 int is_game_over(t_philo *philo)
 {
-    pthread_mutex_lock(&philo->data->game_over_lock);
-    if (philo->data->game_over == 1)
+    int i;
+
+    i = 0;
+    while (i < philo->data->num_philos)
     {
+        pthread_mutex_lock(&philo->data->game_over_lock);
+        if (philo->data->game_over)
+        {
+            pthread_mutex_unlock(&philo->data->game_over_lock);
+            return (1);
+        }
         pthread_mutex_unlock(&philo->data->game_over_lock);
-        return (1);
+        i++;
     }
-    pthread_mutex_unlock(&philo->data->game_over_lock);
     return (0);
 }
+
+// int is_game_over(t_philo *philo)
+// {
+//     pthread_mutex_lock(&philo->data->game_over_lock);
+//     if (philo->data->game_over == 1)
+//     {
+//         pthread_mutex_unlock(&philo->data->game_over_lock);
+//         return (1);
+//     }
+//     pthread_mutex_unlock(&philo->data->game_over_lock);
+//     return (0);
+// }

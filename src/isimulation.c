@@ -37,8 +37,8 @@ int start_simulation(t_data *data)
     pthread_t   monitor_thread;
 
     data->game_over = 0;
-    data->start_time = get_time_in_ms();
     data->all_threads_ready = 0;
+    data->start_time = get_time_in_ms();
     if (create_threads(data) != 0)
         return (1);
     pthread_mutex_lock(&data->game_over_lock);
