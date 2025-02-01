@@ -13,6 +13,7 @@ int create_threads(t_data *data)
             return (1);
         i++;
     }
+
     return (0);
 }
 
@@ -35,10 +36,14 @@ int start_simulation(t_data *data)
 {
     pthread_t   monitor_thread;
 
-    data->simulation_over = 0;
+    data->game_over = 0;
     data->start_time = get_time_in_ms();
+    data->all_threads_ready = 0;
     if (create_threads(data) != 0)
         return (1);
+    pthread_mutex_lock(&data->game_over_lock);
+    data->all_threads_ready = 1;
+    pthread_mutex_unlock(&data->game_over_lock);
     if (pthread_create(&monitor_thread, NULL, monitor_routine, data) != 0)
         return (1);
     if (join_threads(data) != 0)

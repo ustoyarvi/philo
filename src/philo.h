@@ -6,6 +6,7 @@
 # include <sys/time.h>
 # include <stdlib.h>
 # include <stdio.h>
+# include <stdbool.h>
 
 // Структура для представления философа
 typedef struct s_philo
@@ -28,10 +29,11 @@ typedef struct s_data
     long long       time_to_sleep;  // Время на сон
     int             meals_required; // Максимальное количество приемов пищи, которое должен съесть каждый философ
     long long       start_time;     // Время начала симуляции (используется для расчета времени)
-    int             simulation_over; // Флаг завершения
+    int             game_over; // Флаг завершения
+    int             all_threads_ready; // Флаг готовности всех потоков
     pthread_mutex_t *forks;     // теперь это снова НЕ Массив указателей ( * Указатель на массив мьютексов для вилок)
     pthread_mutex_t print_lock;    // Мьютекс для синхронизации вывода сообщений в консоль
-    pthread_mutex_t simulation_over_lock; // Мьютекс для лока при проверке статуса смерти 
+    pthread_mutex_t game_over_lock; // Мьютекс для лока при проверке статуса смерти 
     pthread_mutex_t meal_lock; // Мьютекс для синхронизации доступа к времени последнего приёма пищи
     t_philo         *philos;    // Указатель на массив философов
 }            t_data;
@@ -39,9 +41,11 @@ typedef struct s_data
 // Вспомогательные функции
 int         is_positive_number(const char *str);
 int         ft_atoi(const char *str);
+int         is_game_over(t_philo *philo);
 long long   get_time_in_ms(void); // Функция для получения текущего времени
-long long   get_time_in_mkrs(void);
+long long   get_time_in_mkrs(void); // Функция для получения текущего времени в микросекундах
 void        precise_sleep(long usec, t_data *data);
+
 
 
 // Парсинг и инициализация

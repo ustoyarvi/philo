@@ -14,8 +14,8 @@ void    cleanup(t_data *data)
     // Уничтожаем мьютекс для вывода и мьютекс проверки статуса смерти
     pthread_mutex_destroy(&data->print_lock);
    // free(data->print_lock);
-    pthread_mutex_destroy(&data->simulation_over_lock);
- //   free(data->simulation_over_lock);
+    pthread_mutex_destroy(&data->game_over_lock);
+ //   free(data->game_over_lock);
     pthread_mutex_destroy(&data->meal_lock);
 
 // Освобождаем память

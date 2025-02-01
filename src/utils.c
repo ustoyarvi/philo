@@ -60,13 +60,13 @@ void    precise_sleep(long usec, t_data *data)
     start = get_time_in_mkrs();
     while (get_time_in_mkrs() - start < usec)
     {
-        pthread_mutex_lock(&data->simulation_over_lock);
-        if (data->simulation_over)
+        pthread_mutex_lock(&data->game_over_lock);
+        if (data->game_over)
         {
-            pthread_mutex_unlock(&data->simulation_over_lock);
+            pthread_mutex_unlock(&data->game_over_lock);
             break;
         }
-        pthread_mutex_unlock(&data->simulation_over_lock);
+        pthread_mutex_unlock(&data->game_over_lock);
         elapsed = get_time_in_mkrs() - start;
         rem = usec - elapsed;
         if (rem > 1000)

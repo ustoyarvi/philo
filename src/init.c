@@ -21,7 +21,7 @@ int parse_arguments(int argc, char **argv, t_data *data)
     }
     if ((data->num_philos = ft_atoi(argv[1])) == 1)
     {
-        printf("Error: You can't have only ONE philosopher!");
+        printf("Sorry, one philosopher can't eat and so he died.\n");
         return (1);
     }
     data->time_to_die = ft_atoi(argv[2]);
@@ -83,8 +83,8 @@ int init_mutexes(t_data *data)
         return (1);
     }
     // Инициализируем мьютекс для проверки статуса смерти
-   // data->simulation_over_lock = malloc(sizeof(pthread_mutex_t));
-    if (pthread_mutex_init(&data->simulation_over_lock, NULL) != 0)
+   // data->game_over_lock = malloc(sizeof(pthread_mutex_t));
+    if (pthread_mutex_init(&data->game_over_lock, NULL) != 0)
     {
         printf("Error : Mutex initialized failed for simulation over lock.\n");
         return (1);
