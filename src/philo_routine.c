@@ -18,8 +18,10 @@ void    take_forks(t_philo *philo)
     }
 }
 
-void    eat(t_philo *philo)
+void    *eat(t_philo *philo)
 {
+    if (is_game_over(philo))
+        return "game over";
     take_forks(philo);
     log_action(philo, "is eating");
     pthread_mutex_lock(&philo->data->meal_lock);
@@ -37,6 +39,7 @@ void    eat(t_philo *philo)
         pthread_mutex_unlock(philo->left_fork);
         pthread_mutex_unlock(philo->right_fork);
     }
+    return (NULL);
 }
 
 void    sleep_philosopher(t_philo *philo)
@@ -56,7 +59,6 @@ void    *philosopher_routine(void *arg)
 {
     t_philo *philo;
     bool    ready;
-    int     i;
 
     philo = (t_philo *)arg;
     ready = false;
@@ -65,29 +67,19 @@ void    *philosopher_routine(void *arg)
         pthread_mutex_lock(&philo->data->game_over_lock);
         ready = philo->data->all_threads_ready;
         pthread_mutex_unlock(&philo->data->game_over_lock);
-    }
-    i = 0;
-    pthread_mutex_lock(&philo->data->print_lock);
-    philo->data->start_time = get_time_in_ms();
-    pthread_mutex_unlock(&philo->data->print_lock);
-    while (i < philo->data->num_philos)
-    {
-        pthread_mutex_lock(&philo->data->meal_lock);
-        pthread_mutex_lock(&philo->data->print_lock);
-        philo->data->philos[i].last_meal = philo->data->start_time;
-        pthread_mutex_unlock(&philo->data->print_lock);
-        pthread_mutex_unlock(&philo->data->meal_lock);
-        i++;
+        if (!ready)
+            usleep(100);
     }
 
     if (philo->id % 2 == 0) // || philo->id == philo->data->num_philos)
-        precise_sleep(1000, philo->data);
-        //usleep(1000);
-    while (!is_game_over(philo))
+        //precise_sleep(1000, philo->data);
+        usleep(8000);
+    while (1)
     {
         if (is_game_over(philo))
             break;
-        eat(philo);
+        if (eat(philo) != NULL)
+            break;
         if (is_game_over(philo))
             break;
         sleep_philosopher(philo);
@@ -98,25 +90,35 @@ void    *philosopher_routine(void *arg)
     return (NULL);
 }
 
-
 int is_game_over(t_philo *philo)
 {
-    int i;
+    int game_over;
 
-    i = 0;
-    while (i < philo->data->num_philos)
-    {
-        pthread_mutex_lock(&philo->data->game_over_lock);
-        if (philo->data->game_over)
-        {
-            pthread_mutex_unlock(&philo->data->game_over_lock);
-            return (1);
-        }
-        pthread_mutex_unlock(&philo->data->game_over_lock);
-        i++;
-    }
-    return (0);
+    pthread_mutex_lock(&philo->data->game_over_lock);
+    game_over = philo->data->game_over;
+    pthread_mutex_unlock(&philo->data->game_over_lock);
+
+    return game_over;
 }
+
+// int is_game_over(t_philo *philo)
+// {
+//     int i;
+
+//     i = 0;
+//     while (i < philo->data->num_philos)
+//     {
+//         pthread_mutex_lock(&philo->data->game_over_lock);
+//         if (philo->data->game_over)
+//         {
+//             pthread_mutex_unlock(&philo->data->game_over_lock);
+//             return (1);
+//         }
+//         pthread_mutex_unlock(&philo->data->game_over_lock);
+//         i++;
+//     }
+//     return (0);
+// }
 
 // int is_game_over(t_philo *philo)
 // {

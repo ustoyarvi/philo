@@ -59,7 +59,7 @@ void        *monitor_routine(void *arg);
 
 // Логика философа
 void        take_forks(t_philo *philo);
-void        eat(t_philo *philo);
+void        *eat(t_philo *philo);
 void        sleep_philosopher(t_philo *philo);
 void        think(t_philo *philo);
 

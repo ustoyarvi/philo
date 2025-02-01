@@ -81,7 +81,11 @@ void    precise_sleep(long usec, t_data *data)
 
 void    log_action(t_philo *philo, char *action)
 {
+    // pthread_mutex_lock(&philo->data->game_over_lock);
     pthread_mutex_lock(&philo->data->print_lock);
-    printf("%lld %d %s\n", get_time_in_ms() - philo->data->start_time, philo->id, action);
+    // printf("game_over = %d \n", philo->data->game_over);
+    if (philo->data->game_over == 0)
+        printf("%lld %d %s\n", get_time_in_ms() - philo->data->start_time, philo->id, action);
     pthread_mutex_unlock(&philo->data->print_lock);
+    // pthread_mutex_unlock(&philo->data->game_over_lock);
 }   
