@@ -6,11 +6,17 @@
 /*   By: dsedlets < dsedlets@student.42yerevan.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 23:20:43 by dsedlets          #+#    #+#             */
-/*   Updated: 2025/02/02 23:21:43 by dsedlets         ###   ########.fr       */
+/*   Updated: 2025/02/03 21:52:55 by dsedlets         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	think(t_philo *philo)
+{
+	log_action(philo, "is thinking");
+	precise_sleep(2000, philo->data);
+}
 
 void	log_action(t_philo *philo, char *action)
 {
@@ -29,4 +35,10 @@ int	is_game_over(t_philo *philo)
 	game_over = philo->data->game_over;
 	pthread_mutex_unlock(&philo->data->game_over_lock);
 	return (game_over);
+}
+
+int	printf_error_mutex(void)
+{
+	printf("Error: Mutex initialized failed\n");
+	return (1);
 }

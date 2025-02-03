@@ -6,7 +6,7 @@
 /*   By: dsedlets < dsedlets@student.42yerevan.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 23:03:02 by dsedlets          #+#    #+#             */
-/*   Updated: 2025/02/02 23:13:52 by dsedlets         ###   ########.fr       */
+/*   Updated: 2025/02/04 00:13:03 by dsedlets         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ int					is_game_over(t_philo *philo);
 long long			get_time_in_ms(void);	// Получение текущего времени
 long long			get_time_in_mkrs(void);	// И в микросекундах
 void				precise_sleep(long usec, t_data *data);
+int					printf_error_mutex(void);
 
 // Парсинг и инициализация
 int					parse_arguments(int argc, char **argv, t_data *data);
@@ -66,12 +67,15 @@ int					init_data(t_data *data);
 int					start_simulation(t_data *data);
 void				*philosopher_routine(void *arg);
 void				*monitor_routine(void *arg);
+void				*philo_died(t_data *data, int i);
+void				*meals_required(t_data *data);
 
 // Логика философа
 void				take_forks(t_philo *philo);
 void				*eat(t_philo *philo);
 void				sleep_philosopher(t_philo *philo);
 void				think(t_philo *philo);
+void				philo_go_loop(t_philo *philo);
 
 // Логирование и очистка
 void				log_action(t_philo *philo, char *action);

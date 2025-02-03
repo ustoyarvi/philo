@@ -6,48 +6,11 @@
 /*   By: dsedlets < dsedlets@student.42yerevan.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 22:21:34 by dsedlets          #+#    #+#             */
-/*   Updated: 2025/02/02 22:45:58 by dsedlets         ###   ########.fr       */
+/*   Updated: 2025/02/03 23:03:45 by dsedlets         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	parse_arguments(int argc, char **argv, t_data *data)
-{
-	int	i;
-
-	if (argc < 5 || argc > 6)
-	{
-		printf("Error: Invalid number of arguments.\n");
-		return (1);
-	}
-	i = 1;
-	while (i < argc)
-	{
-		if (!is_positive_number(argv[i]))
-		{
-			printf("Error: All arguments must be positive number.\n");
-			return (1);
-		}
-		i++;
-	}
-	if ((data->num_philos = ft_atoi(argv[1])) == 1)
-	{
-		printf("Sorry, one philosopher can't eat and so he died.\n");
-		return (1);
-	}
-	data->time_to_die = ft_atoi(argv[2]);
-	data->time_to_eat = ft_atoi(argv[3]);
-	data->time_to_sleep = ft_atoi(argv[4]);
-	data->meals_required = (argc == 6) ? ft_atoi(argv[5]) : -1;
-	if (data->num_philos <= 0 || data->time_to_die <= 0
-		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0)
-	{
-		printf("Error: Arguments must be greater than 0.\n");
-		return (1);
-	}
-	return (0);
-}
 
 int	allocate_memory(t_data *data)
 {
@@ -75,27 +38,15 @@ int	init_mutexes(t_data *data)
 	while (i < data->num_philos)
 	{
 		if (pthread_mutex_init(&data->forks[i], NULL) != 0)
-		{
-			printf("Error: Mutex initialized failed for fork %d.\n", i);
-			return (1);
-		}
+			printf_error_mutex();
 		i++;
 	}
 	if (pthread_mutex_init(&data->print_lock, NULL) != 0)
-	{
-		printf("Error: Mutex initialized failed for print lock.\n");
-		return (1);
-	}
+		printf_error_mutex();
 	if (pthread_mutex_init(&data->game_over_lock, NULL) != 0)
-	{
-		printf("Error : Mutex initialized failed for simulation over lock.\n");
-		return (1);
-	}
+		printf_error_mutex();
 	if (pthread_mutex_init(&data->meal_lock, NULL) != 0)
-	{
-		printf("Error: Mutex initialization failed for meal_lock.\n");
-		return (1);
-	}
+		printf_error_mutex();
 	return (0);
 }
 
@@ -132,4 +83,20 @@ int	init_data(t_data *data)
 	}
 	setup_philosophers(data);
 	return (0);
+}
+
+void	init_last_meal_times(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->num_philos)
+	{
+		pthread_mutex_lock(&data->meal_lock);
+		pthread_mutex_lock(&data->print_lock);
+		data->philos[i].last_meal = data->start_time;
+		pthread_mutex_unlock(&data->print_lock);
+		pthread_mutex_unlock(&data->meal_lock);
+		i++;
+	}
 }

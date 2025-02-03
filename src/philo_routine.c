@@ -6,7 +6,7 @@
 /*   By: dsedlets < dsedlets@student.42yerevan.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 22:59:12 by dsedlets          #+#    #+#             */
-/*   Updated: 2025/02/02 23:21:23 by dsedlets         ###   ########.fr       */
+/*   Updated: 2025/02/03 21:54:02 by dsedlets         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,6 @@ void	sleep_philosopher(t_philo *philo)
 	precise_sleep(philo->data->time_to_sleep * 1000, philo->data);
 }
 
-void	think(t_philo *philo)
-{
-	log_action(philo, "is thinking");
-	precise_sleep(2000, philo->data);
-}
-
 void	*philosopher_routine(void *arg)
 {
 	t_philo	*philo;
@@ -83,6 +77,12 @@ void	*philosopher_routine(void *arg)
 	}
 	if (philo->id % 2 == 0)
 		usleep(8000);
+	philo_go_loop(philo);
+	return (NULL);
+}
+
+void	philo_go_loop(t_philo *philo)
+{
 	while (1)
 	{
 		if (is_game_over(philo))
@@ -96,5 +96,4 @@ void	*philosopher_routine(void *arg)
 			break ;
 		think(philo);
 	}
-	return (NULL);
 }
